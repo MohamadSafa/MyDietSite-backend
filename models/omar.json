@@ -1,0 +1,26 @@
+{
+  "planName": "oBplan",
+  "planDescription": "This is description",
+  "meals": [
+    {
+      "mealName": "Breakfast",
+      "mealDescription": "Eggs"
+    },
+    {
+      "mealName": "Lunch",
+      "mealDescription": "Sancwich"
+    },
+    {
+      "mealName": "Snack 1",
+      "mealDescription": "Apple"
+    },
+    {
+      "mealName": "Snack 2",
+      "mealDescription": "Protein"
+    },
+    {
+      "mealName": "Dinner",
+      "mealDescription": "Turkey"
+    }
+  ]
+}
