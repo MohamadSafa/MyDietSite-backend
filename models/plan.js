@@ -9,11 +9,11 @@ const planSchema = new mongoose.Schema(
         mealName: {
           type: String,
           required: true,
-        }, // breakfast, lunch, snack1, snack2, dinner
+        }, // breakfast, snack1, lunch, snack2, dinner
         mealDescription: {
           type: String,
           required: true,
-        }, // eggs, taouk, apple, almonds, turkey
+        }, // Labneh ecreme, almonds, taouk, apple, turkey
       },
     ],
   },
