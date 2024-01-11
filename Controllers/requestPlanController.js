@@ -2,7 +2,7 @@ const RequestPlan = require('../models/requestPlan');
 
 const getAllRequestPlans = async (req, res) => {
   try {
-    const requestPlans = await requestPlan.find({}); // User.find({}) == select * from user
+    const requestPlans = await RequestPlan.find({}); // User.find({}) == select * from user
     res.status(200).json({
       success: true,
       message: "order retrieved successfully",
@@ -38,7 +38,7 @@ const addRequestPlan = async (req, res) => {
   const { userId, planId , height, weight, desiredWeight, planStatus } = req.body;
 
   try {
-    if ( !userId || !planId || !height || !weight || !desiredWeight || !planStatus ) {
+    if ( !userId  || !height || !weight || !desiredWeight  ) {
       throw error("All field must be filled");
     }
     const requestPlan = await RequestPlan.create({
@@ -67,7 +67,7 @@ const addRequestPlan = async (req, res) => {
 const deleterequestPlanByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const requestPlan = await requestPlan.deleteOne({ _id: id }); // _id is auto-generated in mongoose
+    const requestPlan = await RequestPlan.deleteOne({ _id: id }); // _id is auto-generated in mongoose
     res.status(200).json({
       success: true,
       message: "requestPlan deleted successfully",
@@ -83,16 +83,18 @@ const deleterequestPlanByID = async (req, res) => {
 };
 
 const updaterequestPlanByID = async (req, res) => {
-  const { height, weight, desiredWeight, planStatus } = req.body;
+  const { planId, height, weight, desiredWeight, planStatus } = req.body;
   try {
-    const requestPlan = await requestPlan.findByIdAndUpdate(
+    const requestPlan = await RequestPlan.findByIdAndUpdate(
       { _id: req.params.ID },
-      { height, weight, desiredWeight, planStatus }
+      {planId, height, weight, desiredWeight, planStatus }
     );
+    
+    const plan = await getPlanByIdd(req.params.ID);
     res.status(200).json({
       success: true,
       message: "requestPlan updated successfully.",
-      data: user,
+      data: plan,
     });
   } catch (error) {
     res.status(500).json({
@@ -103,10 +105,42 @@ const updaterequestPlanByID = async (req, res) => {
   }
 };
 
+const updaterequestPlanByUserID = async (req, res) => {
+  const { planId, height, weight, desiredWeight, planStatus } = req.body;
+  try {
+    const request = await RequestPlan.findOne({userId : req.params.ID});
+    const requestPlan = await RequestPlan.findByIdAndUpdate(
+      {_id: request._id.toString() },
+      {planId, height, weight, desiredWeight, planStatus }
+    );
+    const updated = await RequestPlan.findOne({userId : req.params.ID});
+    
+    res.status(200).json({
+      success: true,
+      message: "requestPlan updated successfully.",
+      data: updated,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Unable to update requestPlan",
+      error: error,
+    });
+  }
+};
+
+const getPlanByIdd = async(id) =>{
+  const plan = await RequestPlan.findById({_id : id})
+  return plan;
+}
+
+
+
 module.exports = {
   getAllRequestPlans,
   getrequestPlanByID,
   addRequestPlan,
   deleterequestPlanByID,
   updaterequestPlanByID,
+  updaterequestPlanByUserID
 };

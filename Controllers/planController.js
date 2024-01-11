@@ -6,15 +6,13 @@ const addPlan = async (req, res) => {
     const {
       planName,
       planDescription,
-      mealName,
-      mealDescription,
+      meals
     } = req.body;
 
     if (
       !planName ||
       !planDescription ||
-      !mealName ||
-      !mealDescription
+      !meals
     ) {
       return res.status(400).json({
         success: false,
@@ -35,11 +33,10 @@ const addPlan = async (req, res) => {
     const newPlan = new Plan({
         planName,
         planDescription,
-        mealName,
-        mealDescription,
+        meals
     });
 
-    const savedPlan = await newPlan.save();
+    const savedPlan = await Plan.create(newPlan)
 
     res.status(200).json({
       success: true,
@@ -98,11 +95,11 @@ const getPlanByID = async (req, res) => {
 };
 
 const updatePlanByID = async (req, res) => {
+  const {planName, planDescription, meals} = req.body
   try {
     const updatedPlan = await Plan.findByIdAndUpdate(
-      req.params.ID,
-      { ...req.body},
-      { new: true }
+      {_id: req.params.ID},
+      {planName, planDescription, meals}
     );
     if (!updatedPlan) {
       res.status(404).json({
@@ -111,10 +108,11 @@ const updatePlanByID = async (req, res) => {
       });
       return;
     }
+    const newPlan = await getPlanByIdd(req.params.ID)
     res.status(200).json({
       success: true,
       message: "Plan updated successfully",
-      data: updatedPlan,
+      data: newPlan
     });
   } catch (error) {
     res.status(500).json({
@@ -170,7 +168,7 @@ const deletePlanByID = async (req, res) => {
 const getPlansByName = async (req, res) => {
   try {
     const plans = await Plan.find({
-        planName: { $regex: req.params.name, $options: "i" },
+        planName: req.body.name 
     });
     res.status(200).json({
       success: true,
@@ -186,24 +184,10 @@ const getPlansByName = async (req, res) => {
   }
 };
 
-const getPlansByDescription = async (req, res) => {
-  try {
-    const plans = await Plan.find({
-      description: req.params.description,
-    });
-    res.status(200).json({
-      success: true,
-      message: "Plans retrieved by description successfully",
-      data: plans,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Unable to get plans by description",
-      error: error,
-    });
-  }
-};
+const getPlanByIdd = async(id) =>{
+  const plan = await Plan.findById({_id : id})
+  return plan;
+}
 
 module.exports = {
   addPlan,
@@ -212,5 +196,4 @@ module.exports = {
   updatePlanByID,
   deletePlanByID,
   getPlansByName,
-  getPlansByDescription,
 };

@@ -2,6 +2,8 @@ require("dotenv").config();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { error } = require("console");
+
 const generateToken = (id, role) => {
   console.log(process.env.SECRET_KEY)
   const token = jwt.sign({ id, role }, process.env.SECRET_KEY, {
@@ -20,15 +22,15 @@ const addUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await User.create({
-      fullName: fullName,
-      email: email,
-      password: hashedPassword,
-      role: role,
-      phoneNumber: phoneNumber,
+      fullName,
+      email,
+      password : hashedPassword,
+      role,
+      phoneNumber,
     });
     if (!user) throw Error("An error occured during adding a user ");
     const token = generateToken(user._id, role);
-    res.status(200).json({ message: "Adding a user successfully", user });
+    res.status(200).json({ message: "Adding a user successfully", user, token });
   } catch (error) {
     res
       .status(500)
@@ -40,11 +42,10 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     if (!email || !password) throw Error("All fields must be filled");
-    const user = await User.find({ email, password }); // User.find({}) == select * from user
     const exist = await User.findOne({ email });
     if (!exist) throw Error("Not registered yet");
     const comparing = await bcrypt.compare(password, exist.password);
-    if (!comparing) throw Error("Passwords does not match");
+    if (!comparing) throw Error("Passwords do not match");
     const token = generateToken(exist._id, exist.role);
     res.status(200).json({ message: "login successfully", token });
   } catch (error) {
@@ -124,7 +125,6 @@ const deleteUserByID = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Data deleted successfully",
-      data: user,
     });
   } catch (error) {
     res.status(500).json({
@@ -138,14 +138,17 @@ const deleteUserByID = async (req, res) => {
 const updateUserByID = async (req, res) => {
   const { fullName, email, password, role, phoneNumber} = req.body;
   try {
+    const exist = await getUserByIddd(req.params.ID);
+    if(exist === null)throw error("no user with this id")
     const user = await User.findByIdAndUpdate(
       { _id: req.params.ID },
       { fullName, email, password, role, phoneNumber}
     );
+    const newOne = await getUserByIddd(req.params.ID)
     res.status(200).json({
       success: true,
       message: "data updated successfully.",
-      data: user,
+      data: newOne,
     });
   } catch (error) {
     res.status(500).json({
@@ -176,13 +179,11 @@ const switchToAdmin = async (req, res) => {
       });
     }
 
-    user.role = "admin";
-    await user.save();
-
+    const updatedUser = await User.findByIdAndUpdate({_id:userId},{role : "admin"});
     return res.status(200).json({
       success: true,
       message: `User with id ${userId} switched to admin successfully.`,
-      data: user,
+      data: updatedUser,
     });
   } catch (error) {
     return res.status(400).json({
@@ -229,7 +230,10 @@ const switchToAdmin = async (req, res) => {
 //     });
 //   }
 // };
-
+const getUserByIddd = async(id) =>{
+  const user = await User.findById({_id : id})
+  return user;
+}
 module.exports = {
   addUser,
   login,

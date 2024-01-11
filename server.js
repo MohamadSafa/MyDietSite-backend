@@ -11,8 +11,8 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 app.use("/users", userRouter);
-app.use("/requestPlan", requestPlanRouter);
-app.use("/plan", planRoutes);
+app.use("/requests", requestPlanRouter);
+app.use("/plans", planRoutes);
 
 // Allow all origins for development; adjust for production
 

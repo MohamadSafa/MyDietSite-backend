@@ -20,6 +20,6 @@ const planSchema = new mongoose.Schema(
   { timestamps: true } // Automatically add createdAt and updatedAt to the schema
 );
 
-const Plan = mongoose.model("Product", planSchema);
+const Plan = mongoose.model("plans", planSchema);
 
 module.exports = Plan;

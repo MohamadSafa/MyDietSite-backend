@@ -9,23 +9,19 @@ router.get("/getAll", controllers.getAllUsers);
 router.get("/getUserId/:ID", controllers.getUserByID);
 router.delete(
   "/delete/:id",
-  isAuthenticated(["admin"]),
+  // isAuthenticated(["admin"]),
   controllers.deleteUserByID
 );
 router.put(
   "/update/:ID",
-  isAuthenticated(["admin"]),
+  // isAuthenticated(["admin"]),
   controllers.updateUserByID
 );
 router.put(
   "/switchToAdmin/:ID",
-  isAuthenticated(["admin"]),
+  // isAuthenticated(["admin"]),
   controllers.switchToAdmin
 );
-// router.put(
-//   "/switchToSeller/:ID",
-//   isAuthenticated(["admin"]),
-//   controllers.switchToSeller
-// );
+
 
 module.exports = router;
