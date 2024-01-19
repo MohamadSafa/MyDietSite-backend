@@ -20,22 +20,14 @@ const addPlan = async (req, res) => {
       });
     }
 
-    // if (!req.file) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     message: "Image file is required",
-    //   });
-    // }
-
-    // Upload image to Cloudinary
-    // const imageURL = await imageUploader(req);
+    
 
     const newPlan = new Plan({
         planName,
         planDescription,
         meals
     });
-
+    console.log(meals)
     const savedPlan = await Plan.create(newPlan)
 
     res.status(200).json({

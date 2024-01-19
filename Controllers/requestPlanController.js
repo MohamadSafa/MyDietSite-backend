@@ -34,6 +34,33 @@ const getrequestPlanByID = async (req, res) => {
   }
 };
 
+const getrequestPlanByUserID = async (req, res) => {
+  try {
+    const requestPlan = await RequestPlan.findOne({userId : req.params.Id} )
+    .populate({
+      path : "userId",
+      model : "users",
+      select : "fullName, email"
+    })
+    .populate({
+      path : "planId",
+      model : "plans",
+      select : "planName planDescription meals"
+    })
+    res.status(200).json({
+      success: true,
+      message: "requestPlan retrieved successfully",
+      data: requestPlan,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "unable to get requestPlan by ID",
+      error: error,
+    });
+  }
+};
+
 const addRequestPlan = async (req, res) => {
   const { userId, planId , height, weight, desiredWeight, planStatus } = req.body;
 
@@ -142,5 +169,6 @@ module.exports = {
   addRequestPlan,
   deleterequestPlanByID,
   updaterequestPlanByID,
-  updaterequestPlanByUserID
+  updaterequestPlanByUserID,
+  getrequestPlanByUserID
 };

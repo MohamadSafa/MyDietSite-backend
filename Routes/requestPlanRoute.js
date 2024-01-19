@@ -4,7 +4,9 @@ const controllers = require("../Controllers/requestPlanController");
 
 router.post("/add", controllers.addRequestPlan);
 router.get("/getAll", controllers.getAllRequestPlans);
-router.get("/getOrderId/:ID", controllers.getrequestPlanByID);
+router.get("/getRequestById/:ID", controllers.getrequestPlanByID);
+router.get("/getRequestByUserId/:Id", controllers.getrequestPlanByUserID);
+
 router.put("/updateById/:ID", controllers.updaterequestPlanByID);
 router.put("/updateByUserId/:ID", controllers.updaterequestPlanByUserID);
 router.delete("/delete/:id", controllers.deleterequestPlanByID);
