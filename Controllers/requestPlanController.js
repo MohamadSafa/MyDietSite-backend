@@ -40,7 +40,7 @@ const getrequestPlanByUserID = async (req, res) => {
     .populate({
       path : "userId",
       model : "users",
-      select : "fullName, email"
+      select : "fullName email"
     })
     .populate({
       path : "planId",

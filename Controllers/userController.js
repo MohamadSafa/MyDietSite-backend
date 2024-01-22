@@ -136,13 +136,25 @@ const deleteUserByID = async (req, res) => {
 };
 
 const updateUserByID = async (req, res) => {
-  const { fullName, email, password, role, phoneNumber} = req.body;
+  const { fullName, email, role, phoneNumber} = req.body;
+  console.log(fullName)
+  console.log(email)
+  console.log(role)
+  console.log(phoneNumber)
   try {
     const exist = await getUserByIddd(req.params.ID);
     if(exist === null)throw error("no user with this id")
+    if(exist.email !== email){
+      const existEmail = await User.findOne({email})
+      if(existEmail) res.status(400).json({message:'This Email already exists'})
+    }
+    if(exist.phoneNumber !== phoneNumber){
+      const existPhoneNumber = await User.findOne({phoneNumber})
+      if(existPhoneNumber) res.status(400).json({message:'This Phone Number already exists'})
+    }
     const user = await User.findByIdAndUpdate(
       { _id: req.params.ID },
-      { fullName, email, password, role, phoneNumber}
+      { fullName, email, role, phoneNumber}
     );
     const newOne = await getUserByIddd(req.params.ID)
     res.status(200).json({
